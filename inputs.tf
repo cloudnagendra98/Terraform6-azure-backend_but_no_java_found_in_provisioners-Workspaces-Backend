@@ -191,6 +191,7 @@ variable "appvm_config" {
     username                      = string
     size                          = string
     public_key_path               = string
+    private_key_path              = string
     publisher                     = string
     offer                         = string
     sku                           = string
@@ -208,9 +209,16 @@ variable "appvm_config" {
     username                      = "Dell"
     size                          = "Standard_B1s"
     public_key_path               = "~/.ssh/id_rsa.pub"
+    private_key_path              = "~/.ssh/id_rsa"
     publisher                     = "Canonical"
     offer                         = "0001-com-ubuntu-server-jammy"
     sku                           = "22_04-lts-gen2"
     version                       = "latest"
   }
+}
+
+variable "app_script_version" {
+  type    = string
+  default = "0"
+
 }

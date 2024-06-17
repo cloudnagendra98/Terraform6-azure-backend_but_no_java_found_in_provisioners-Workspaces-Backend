@@ -78,3 +78,35 @@ resource "azurerm_linux_virtual_machine" "appvm" {
     azurerm_network_security_group.appnsg
   ]
 }
+
+
+resource "null_resource" "script_executor" {
+
+  provisioner "remote-exec" {
+
+    inline = [
+      "sudo apt-get update",
+      "sudo apt-get install openjdk-11-jdk -y",
+      "cd /tmp && wget https://referenceapplicationskhaja.s3.us-west-2.amazonaws.com/spring-petclinic-2.4.2.jar",
+      "java -jar /spring-petclinic-2.4.2.jar &",
+      "sleep 20s"
+    ]
+
+    connection {
+      type        = "ssh"
+      user        = var.appvm_config.username
+      private_key = file(var.appvm_config.private_key_path)
+      #host     = aws_instance.appserver.public_ip
+      host = azurerm_linux_virtual_machine.appvm.public_ip_address # here we are writing the connection block in the same resource which is aws_instance so we use self in place of that
+    }
+
+  }
+  triggers = {
+    app_script_version = var.app_script_version
+
+  }
+  depends_on = [
+    azurerm_linux_virtual_machine.appvm
+  ]
+
+}
